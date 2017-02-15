@@ -1,4 +1,5 @@
 #pragma once
+#include "AllergyOrders.h"
 #include "Patient.h"
 #include "Drug.h"
 #include "DBConnection.h"
@@ -14,5 +15,7 @@ public:
 	~orderService();
 	Patient* searchPatient(CString name);
 	Drug* searchDrug(CString name);
+	int listPatientDrugInteraction(int patientId,int drugId);
+	int listDrugDrugInteraction(int drugId);
 };
 

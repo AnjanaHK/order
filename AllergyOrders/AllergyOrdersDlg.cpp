@@ -189,7 +189,6 @@ void CAllergyOrdersDlg::OnEnChangeEdit2()
 void CAllergyOrdersDlg::OnBnClickedButton1()
 {
 	// TODO: Add your control notification handler code here
-	Patient patient;
 	CString sName;
 	SearchPatientDlg spd(this);
 	patientCntrl.GetWindowText(sName);
@@ -227,7 +226,6 @@ void CAllergyOrdersDlg::OnBnClickedButton2()
 {
 	// TODO: Add your control notification handler code here
 	CString dName;
-	Drug drug;
 	drugCntrl.GetWindowTextW(dName);
 	SearchDrug sd(this);
 	sd.drugName = dName;
@@ -248,4 +246,8 @@ INT_PTR CAboutDlg::DoModal()
 void CAllergyOrdersDlg::OnBnClickedButton3()
 {
 	// TODO: Add your control notification handler code here
+	AllergyDisplay ad(this);
+	ad.patient = patient;
+	ad.drug = drug;
+	ad.DoModal();
 }

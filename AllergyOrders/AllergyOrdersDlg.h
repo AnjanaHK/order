@@ -8,7 +8,7 @@
 //#include "resource.h"
 #include "OrdersGlobal.h"
 #include "afxcmn.h"
-
+#include "AllergyDisplay.h"
 // CAllergyOrdersDlg dialog
 class CAllergyOrdersDlg : public CDialogEx
 {
@@ -47,4 +47,5 @@ public:
 	CListCtrl m_orderList;
 	afx_msg void OnBnClickedButton3();
 	Patient patient;
+	Drug drug;
 };

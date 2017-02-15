@@ -9,7 +9,8 @@
 #endif
 
 #include "resource.h"		// main symbols
-
+#include "Patient.h"
+#include "Drug.h"
 
 // CAllergyOrdersApp:
 // See AllergyOrders.cpp for the implementation of this class
@@ -20,7 +21,9 @@ class CAllergyOrdersApp : public CWinApp
 public:
 
 	CAllergyOrdersApp();
-
+	Patient* globalPatientArray;
+	Drug* globalDrugArray;
+	CString* severity;
 // Overrides
 public:
 	virtual BOOL InitInstance();

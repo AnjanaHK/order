@@ -185,6 +185,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllergyDisplay.h" />
     <ClInclude Include="AllergyOrders.h" />
     <ClInclude Include="AllergyOrdersDlg.h" />
     <ClInclude Include="DBConnection.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AllergyDisplay.cpp" />
     <ClCompile Include="AllergyOrders.cpp" />
     <ClCompile Include="AllergyOrdersDlg.cpp" />
     <ClCompile Include="DBConnection.cpp" />

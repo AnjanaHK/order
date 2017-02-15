@@ -34,4 +34,7 @@ void DBConnection::openConnection()
 void DBConnection::closeConnection()
 {
 	database.Close();
+
+
+
 }
