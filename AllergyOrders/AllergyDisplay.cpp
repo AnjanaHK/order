@@ -45,6 +45,13 @@ BOOL AllergyDisplay::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
+	CString id;
+	id.Format(L" %d", patient.getPatientId());
+	m_PatientID.SetWindowTextW(id);
+	m_patientName.SetWindowTextW(patient.getPatientName());
+	id.Format(L" %d", drug.getDrugId());
+	m_DrugId.SetWindowTextW(id);
+	m_DrugName.SetWindowTextW(drug.getDrugName());
 	int arraySize;
 	arraySize = os.listPatientDrugInteraction(patient.getPatientId(), drug.getDrugId());
 	LVCOLUMN lvColumn;
