@@ -318,6 +318,6 @@ void CAllergyOrdersDlg::OnBnClickedOk()
 		os.saveOrders(patient.getPatientId(), drug.getDrugId(), date, comment);
 	}
 
-	MessageBox(_T("entered data to table"));
+	MessageBox(_T("Order placed sucessfully"));
 	CDialogEx::OnOK();
 }

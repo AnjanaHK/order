@@ -32,4 +32,5 @@ public:
 	CListCtrl patientList;
 	CString name;
 	Patient patient;
+	int recordSize;
 };

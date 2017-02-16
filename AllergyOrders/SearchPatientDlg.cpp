@@ -46,7 +46,20 @@ void SearchPatientDlg::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
 	//this->ShowWindow(SW_HIDE);
-	
+	//ASSERT(patientList != NULL);
+
+	POSITION pos = patientList.GetFirstSelectedItemPosition();
+	if (pos == NULL)
+		TRACE0("No items were selected!\n");
+	else
+	{
+		while (pos)
+		{
+			int nItem = patientList.GetNextSelectedItem(pos);
+			TRACE1("Item %d was selected!\n", nItem);
+			patient = theApp.globalPatientArray[recordSize - nItem - 1];
+		}
+	}
 	CDialogEx::OnOK();
 }
 
@@ -65,11 +78,11 @@ BOOL SearchPatientDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
+	patientList.SetExtendedStyle(patientList.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
 	int i= 0;
 	//vector<Patient> p;
-	Patient* p;
 	orderService os;
-	p = os.searchPatient(name);
+	recordSize = os.searchPatient(name);
 	LVCOLUMN lvColumn;
 
 	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
@@ -83,10 +96,10 @@ BOOL SearchPatientDlg::OnInitDialog()
 	lvColumn.cx = 200;
 	lvColumn.pszText = _T("Name");
 	patientList.InsertColumn(1, &lvColumn);
-	//for(Patient pat : p) 
-	//{
+	for(int i=0;i<recordSize;i++) 
+	{
 		CString text;
-		text.Format(L"%d", p[0].getPatientId());
+		text.Format(L"%d", theApp.globalPatientArray[i].getPatientId());
 		//text.Append(p[0].getPatientName());
 		//searchCntrl.SetWindowText(text);
 		
@@ -99,9 +112,8 @@ BOOL SearchPatientDlg::OnInitDialog()
 		lvItem.pszText = text.GetBuffer();
 		nItem = patientList.InsertItem(&lvItem);
 
-		patientList.SetItemText(nItem, 1, p[0].getPatientName());
-	//}
-	patient = p[0];
+		patientList.SetItemText(nItem, 1, theApp.globalPatientArray[i].getPatientName());
+	}
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }

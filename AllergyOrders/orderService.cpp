@@ -11,19 +11,27 @@ orderService::~orderService()
 
 
 //vector<Patient>
-Patient* orderService::searchPatient(CString name)
+int orderService::searchPatient(CString name)
 {
 	int i = -1;
 	CString strSql;
 	//try
 	//{
+	strSql.Format(L"select count(*) as count from dbo.patient where patient_name like '" + name + "%%'");
+	dbc.openConnection();
+	CRecordset recordset;
+	recordset.m_pDatabase = &dbc.database;
+	recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);
+	CString size;
+	recordset.GetFieldValue(L"count", size);
+	recordset.Close();
+	dbc.closeConnection();
+	int rowsize = _wtoi(size);
 		strSql.Format(L"select * from dbo.patient where patient_name like '" + name+"%%'");
 		dbc.openConnection();
-		CRecordset recordset;
 		recordset.m_pDatabase = &dbc.database;
 		recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);
 		//dbc.closeConnection();
-		int rowsize = recordset.GetRowsetSize();
 		Patient* p = new Patient[rowsize];
 		//vector<Patient> p;
 		while (!recordset.IsEOF())
@@ -40,21 +48,31 @@ Patient* orderService::searchPatient(CString name)
 	//{
 		//MessageBox(_T("Error in search function"));
 //	}
-	return (p);
+		theApp.globalPatientArray = p;
+		recordset.Close();
+		dbc.closeConnection();
+	return (rowsize);
 }
-Drug* orderService::searchDrug(CString name)
+int orderService::searchDrug(CString name)
 {
 
 	CString strSql;
 	//try
 	//{
-	strSql.Format(L"select * from dbo.drug_reference where drug_name like '" + name + "%%'");
+	strSql.Format(L"select count(*) as count from dbo.drug_reference where drug_name like '" + name + "%%'");
 	dbc.openConnection();
 	CRecordset recordset;
 	recordset.m_pDatabase = &dbc.database;
 	recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);
-	//dbc.closeConnection();
-	int rowsize = recordset.GetRowsetSize();
+	CString size;
+	recordset.GetFieldValue(L"count", size);
+	recordset.Close();
+	dbc.closeConnection();
+	int rowsize = _wtoi(size);
+	strSql.Format(L"select * from dbo.drug_reference where drug_name like '" + name + "%%'");
+	dbc.openConnection();
+	recordset.m_pDatabase = &dbc.database;
+	recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);
 	Drug* d = new Drug[rowsize];
 	int i = 0;
 	while (!recordset.IsEOF())
@@ -71,7 +89,10 @@ Drug* orderService::searchDrug(CString name)
 	//{
 	//MessageBox(_T("Error in search function"));
 	//	}
-	return (d);
+	theApp.globalDrugArray = d;
+	recordset.Close();
+	dbc.closeConnection();
+	return (rowsize);
 }
 int orderService::listPatientDrugInteraction(int patientId,int drugId)
 {
@@ -90,8 +111,7 @@ int orderService::listPatientDrugInteraction(int patientId,int drugId)
 	recordset.Close();
 	dbc.closeConnection();
 	int rowsize = _wtoi(size);
-	strSql.Format(L"select dp.DrugId, d.Drug_name,dp.severity from dbo.Patient p,dbo.interaction_patient dp, dbo.drug_reference d where p.PatientId=dp.PatientId and dp.DrugId=d.DrugId and dp.PatientId= %d",patientId );
-	strSql.AppendFormat(L"and dp.drugId=%d", drugId);
+	strSql.Format(L"select dp.DrugId, d.Drug_name,dp.severity from dbo.Patient p,dbo.interaction_patient dp, dbo.drug_reference d where p.PatientId=dp.PatientId and dp.DrugId=d.DrugId and dp.PatientId= %d and dp.drugId=%d ", patientId, drugId );
 	dbc.openConnection();
 	recordset.m_pDatabase = &dbc.database;
 	recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);

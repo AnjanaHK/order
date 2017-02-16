@@ -29,5 +29,5 @@ public:
 	CListCtrl drugListCntrl;
 	CString drugName;
 	Drug drug;
-
+	int recordSize;
 };
