@@ -47,7 +47,9 @@ public:
 	CListCtrl m_orderList;
 	afx_msg void OnBnClickedButton3();
 	Patient patient;
-	Drug drug;
+	CArray<Drug,Drug&> drug;
 	CEdit m_comment;
 	afx_msg void OnBnClickedOk();
+	static int drugRecordSize;
 };
+//int CAllergyOrdersDlg::drugRecordSize = 0;

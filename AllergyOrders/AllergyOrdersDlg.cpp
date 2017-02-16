@@ -50,7 +50,7 @@ END_MESSAGE_MAP()
 
 
 // CAllergyOrdersDlg dialog
-
+int CAllergyOrdersDlg::drugRecordSize = 0;
 
 
 CAllergyOrdersDlg::CAllergyOrdersDlg(CWnd* pParent /*=NULL*/)
@@ -256,8 +256,8 @@ void CAllergyOrdersDlg::OnBnClickedButton2()
 	SearchDrug sd(this);
 	sd.drugName = dName;
 	sd.DoModal();
-	drug = sd.drug;
-	drugCntrl.SetWindowTextW(drug.getDrugName());
+	drug.SetAtGrow(drugRecordSize + 1,sd.drug);
+	drugCntrl.SetWindowTextW(drug[drugRecordSize+1].getDrugName().GetString());
 }
 
 
@@ -274,7 +274,7 @@ void CAllergyOrdersDlg::OnBnClickedButton3()
 	// TODO: Add your control notification handler code here
 	AllergyDisplay ad(this);
 	ad.patient = patient;
-	ad.drug = drug;
+	ad.drug = drug[drugRecordSize+1];
 	INT_PTR nResponse = ad.DoModal();
 	if (nResponse == IDOK)
 	{
@@ -287,7 +287,7 @@ void CAllergyOrdersDlg::OnBnClickedButton3()
 		lvItem.pszText = (LPWSTR)patient.getPatientName().GetString();
 		nItem = m_orderList.InsertItem(&lvItem);
 		
-		m_orderList.SetItemText(nItem, 1, drug.getDrugName());
+		m_orderList.SetItemText(nItem, 1, drug[drugRecordSize+1].getDrugName());
 		CTime dateVar;
 		dateCntrl.GetTime(dateVar);
 		CString date = dateVar.Format("%Y-%m-%d");
@@ -295,6 +295,7 @@ void CAllergyOrdersDlg::OnBnClickedButton3()
 		CString comment;
 		m_comment.GetWindowTextW(comment);
 		m_orderList.SetItemText(nItem, 3,comment);
+		drugRecordSize++;
 	}
 	else if (nResponse == IDCANCEL)
 	{
@@ -315,7 +316,7 @@ void CAllergyOrdersDlg::OnBnClickedOk()
 		did = _wtoi(m_orderList.GetItemText(i, 1));	
 		date = m_orderList.GetItemText(i, 2);
 		comment = m_orderList.GetItemText(i, 3);
-		os.saveOrders(patient.getPatientId(), drug.getDrugId(), date, comment);
+		os.saveOrders(patient.getPatientId(), drug[i+1].getDrugId(), date, comment);
 	}
 
 	MessageBox(_T("Order placed sucessfully"));

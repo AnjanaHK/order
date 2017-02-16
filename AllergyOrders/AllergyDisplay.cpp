@@ -46,6 +46,11 @@ BOOL AllergyDisplay::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
+	
+	int arraySize=0;
+	arraySize = os.listPatientDrugInteraction(patient.getPatientId(), drug.getDrugId());
+	if(arraySize>0)
+	{
 	CString id;
 	id.Format(L" %d", patient.getPatientId());
 	m_PatientID.SetWindowTextW(id);
@@ -53,8 +58,7 @@ BOOL AllergyDisplay::OnInitDialog()
 	id.Format(L" %d", drug.getDrugId());
 	m_DrugId.SetWindowTextW(id);
 	m_DrugName.SetWindowTextW(drug.getDrugName());
-	int arraySize;
-	arraySize = os.listPatientDrugInteraction(patient.getPatientId(), drug.getDrugId());
+	
 	LVCOLUMN lvColumn;
 
 	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
@@ -124,6 +128,11 @@ BOOL AllergyDisplay::OnInitDialog()
 		m_drugAllergyList.SetItemText(nItem, 2, theApp.severity[i]);
 	}
 
+	}
+	else
+	{
+		CDialogEx::OnOK();
+	}
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
