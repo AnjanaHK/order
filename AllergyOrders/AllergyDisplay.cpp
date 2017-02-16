@@ -34,6 +34,7 @@ void AllergyDisplay::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(AllergyDisplay, CDialogEx)
+	ON_BN_CLICKED(IDOK, &AllergyDisplay::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -127,4 +128,12 @@ BOOL AllergyDisplay::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
+void AllergyDisplay::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+
+	CDialogEx::OnOK();
 }

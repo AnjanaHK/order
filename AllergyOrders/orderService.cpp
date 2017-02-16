@@ -79,14 +79,22 @@ int orderService::listPatientDrugInteraction(int patientId,int drugId)
 	CString strSql;
 	//try
 	//{
-	strSql.Format(L"select dp.DrugId, d.Drug_name,dp.severity from dbo.Patient p,dbo.interaction_patient dp, dbo.drug_reference d where p.PatientId=dp.PatientId and dp.DrugId=d.DrugId and dp.PatientId= %d",patientId );
+	strSql.Format(L"select count(*) as count from dbo.Patient p,dbo.interaction_patient dp, dbo.drug_reference d where p.PatientId=dp.PatientId and dp.DrugId=d.DrugId and dp.PatientId= %d", patientId);
 	strSql.AppendFormat(L"and dp.drugId=%d", drugId);
 	dbc.openConnection();
 	CRecordset recordset;
 	recordset.m_pDatabase = &dbc.database;
 	recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);
-	//dbc.closeConnection();
-	int rowsize = recordset.GetRowsetSize();
+	CString size;
+	recordset.GetFieldValue(L"count", size);
+	recordset.Close();
+	dbc.closeConnection();
+	int rowsize = _wtoi(size);
+	strSql.Format(L"select dp.DrugId, d.Drug_name,dp.severity from dbo.Patient p,dbo.interaction_patient dp, dbo.drug_reference d where p.PatientId=dp.PatientId and dp.DrugId=d.DrugId and dp.PatientId= %d",patientId );
+	strSql.AppendFormat(L"and dp.drugId=%d", drugId);
+	dbc.openConnection();
+	recordset.m_pDatabase = &dbc.database;
+	recordset.Open(CRecordset::forwardOnly, strSql, CRecordset::readOnly);
 	Drug* d = new Drug[rowsize];
 	CString* sev = new CString[rowsize];
 	int i = 0;
@@ -155,4 +163,25 @@ int orderService::listDrugDrugInteraction(int drugId)
 	theApp.globalDrugArray = d;
 	theApp.severity = sev;
 	return (rowsize);
+}
+void orderService::saveOrders(int drugId, int patientId, CString date, CString comment)
+{
+
+	CString strSql;
+	//try
+	//{
+	strSql.Format(L"insert into dbo.orders(patientId, drugId, date, comment) values (%d, %d, '%s','%s')",drugId,patientId,date,comment);
+	//strSql.Format(L"select * from dbo.orders");
+	//strSql.Append(date);
+	//strSql.AppendFormat(L"', ");
+	//strSql.Append(comment);
+	dbc.openConnection();
+	//CRecordset recordset;
+	//recordset.m_pDatabase = &dbc.database;
+	//recordset.Open(CRecordset::dynamic, strSql, CRecordset::executeDirect);
+	//recordset.AddNew();
+	dbc.database.ExecuteSQL(strSql);
+	//recordset.Update();
+	//recordset.Close();
+	dbc.closeConnection();
 }

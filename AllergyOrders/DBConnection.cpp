@@ -19,7 +19,6 @@ void DBConnection::openConnection()
 	try
 	{
 		database.Open(_T("Demodns;"), FALSE, FALSE, _T("ODBC;"));
-	
 	}
 	catch (_com_error & ce)
 	{

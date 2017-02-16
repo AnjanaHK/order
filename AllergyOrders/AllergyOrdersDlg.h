@@ -48,4 +48,6 @@ public:
 	afx_msg void OnBnClickedButton3();
 	Patient patient;
 	Drug drug;
+	CEdit m_comment;
+	afx_msg void OnBnClickedOk();
 };

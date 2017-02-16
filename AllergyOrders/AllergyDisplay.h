@@ -38,4 +38,5 @@ public:
 	orderService os;
 	DBConnection dbc;
 	CListCtrl m_drugAllergyList;
+	afx_msg void OnBnClickedOk();
 };

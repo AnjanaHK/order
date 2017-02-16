@@ -66,6 +66,7 @@ void CAllergyOrdersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT2, drugCntrl);
 	DDX_Control(pDX, IDC_DATETIMEPICKER1, dateCntrl);
 	DDX_Control(pDX, IDC_LIST1, m_orderList);
+	DDX_Control(pDX, IDC_EDIT3, m_comment);
 }
 
 BEGIN_MESSAGE_MAP(CAllergyOrdersDlg, CDialogEx)
@@ -77,6 +78,7 @@ BEGIN_MESSAGE_MAP(CAllergyOrdersDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT1, &CAllergyOrdersDlg::OnEnChangeEdit1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CAllergyOrdersDlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON3, &CAllergyOrdersDlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDOK, &CAllergyOrdersDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -112,7 +114,31 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	LVCOLUMN lvColumn;
 
+	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+	lvColumn.fmt = LVCFMT_LEFT;
+	lvColumn.cx = 120;
+	lvColumn.pszText = _T("Patient Name");
+	m_orderList.InsertColumn(0, &lvColumn);
+
+	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+	lvColumn.fmt = LVCFMT_LEFT;
+	lvColumn.cx = 200;
+	lvColumn.pszText = _T("Drug Name");
+	m_orderList.InsertColumn(1, &lvColumn);
+
+	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+	lvColumn.fmt = LVCFMT_LEFT;
+	lvColumn.cx = 200;
+	lvColumn.pszText = _T("Date");
+	m_orderList.InsertColumn(2, &lvColumn);
+
+	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+	lvColumn.fmt = LVCFMT_LEFT;
+	lvColumn.cx = 200;
+	lvColumn.pszText = _T("Comment");
+	m_orderList.InsertColumn(3, &lvColumn);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -249,5 +275,49 @@ void CAllergyOrdersDlg::OnBnClickedButton3()
 	AllergyDisplay ad(this);
 	ad.patient = patient;
 	ad.drug = drug;
-	ad.DoModal();
+	INT_PTR nResponse = ad.DoModal();
+	if (nResponse == IDOK)
+	{
+		ad.DestroyWindow();
+		LVITEM lvItem;
+		int nItem;
+		lvItem.mask = LVIF_TEXT;
+		lvItem.iItem = 0;
+		lvItem.iSubItem = 0;
+		lvItem.pszText = (LPWSTR)patient.getPatientName().GetString();
+		nItem = m_orderList.InsertItem(&lvItem);
+		
+		m_orderList.SetItemText(nItem, 1, drug.getDrugName());
+		CTime dateVar;
+		dateCntrl.GetTime(dateVar);
+		CString date = dateVar.Format("%Y-%m-%d");
+		m_orderList.SetItemText(nItem, 2, date);
+		CString comment;
+		m_comment.GetWindowTextW(comment);
+		m_orderList.SetItemText(nItem, 3,comment);
+	}
+	else if (nResponse == IDCANCEL)
+	{
+		ad.DestroyWindow();
+	}
+}
+
+
+void CAllergyOrdersDlg::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	orderService os;
+	CString date,comment;
+	int pid, did;
+	for (int i = 0; i < m_orderList.GetItemCount(); i++)
+	{
+		pid = _wtoi(m_orderList.GetItemText(i, 0));
+		did = _wtoi(m_orderList.GetItemText(i, 1));	
+		date = m_orderList.GetItemText(i, 2);
+		comment = m_orderList.GetItemText(i, 3);
+		os.saveOrders(patient.getPatientId(), drug.getDrugId(), date, comment);
+	}
+
+	MessageBox(_T("entered data to table"));
+	CDialogEx::OnOK();
 }

@@ -17,5 +17,6 @@ public:
 	Drug* searchDrug(CString name);
 	int listPatientDrugInteraction(int patientId,int drugId);
 	int listDrugDrugInteraction(int drugId);
+	void saveOrders(int drugId, int patientId, CString date, CString comment);
 };
 
