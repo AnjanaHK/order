@@ -46,11 +46,6 @@ BOOL AllergyDisplay::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
-	
-	int arraySize=0;
-	arraySize = os.listPatientDrugInteraction(patient.getPatientId(), drug.getDrugId());
-	if(arraySize>0)
-	{
 	CString id;
 	id.Format(L" %d", patient.getPatientId());
 	m_PatientID.SetWindowTextW(id);
@@ -58,42 +53,50 @@ BOOL AllergyDisplay::OnInitDialog()
 	id.Format(L" %d", drug.getDrugId());
 	m_DrugId.SetWindowTextW(id);
 	m_DrugName.SetWindowTextW(drug.getDrugName());
-	
+
 	LVCOLUMN lvColumn;
-
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 120;
-	lvColumn.pszText = _T("Drug ID");
-	m_patientAllergyList.InsertColumn(0, &lvColumn);
-
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 200;
-	lvColumn.pszText = _T("Name");
-	m_patientAllergyList.InsertColumn(1, &lvColumn);
-
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 200;
-	lvColumn.pszText = _T("Severity");
-	m_patientAllergyList.InsertColumn(2, &lvColumn);
-	for (int i = 0; i < arraySize; i++)
+	int parraySize=0;
+	parraySize = os.listPatientDrugInteraction(patient.getPatientId(), drug.getDrugId());
+	if (parraySize > 0)
 	{
-		LVITEM lvItem;
-		int nItem;
-		CString text;
-		text.Format(L"%d", theApp.globalDrugArray[i].getDrugId());
-		lvItem.mask = LVIF_TEXT;
-		lvItem.iItem = 0;
-		lvItem.iSubItem = 0;
-		lvItem.pszText = text.GetBuffer();
-		nItem = m_patientAllergyList.InsertItem(&lvItem);
+		
 
-		m_patientAllergyList.SetItemText(nItem, 1, theApp.globalDrugArray[i].getDrugName());
-		m_patientAllergyList.SetItemText(nItem, 2, theApp.severity[i]);
+		lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+		lvColumn.fmt = LVCFMT_LEFT;
+		lvColumn.cx = 120;
+		lvColumn.pszText = _T("Drug ID");
+		m_patientAllergyList.InsertColumn(0, &lvColumn);
+
+		lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+		lvColumn.fmt = LVCFMT_LEFT;
+		lvColumn.cx = 200;
+		lvColumn.pszText = _T("Name");
+		m_patientAllergyList.InsertColumn(1, &lvColumn);
+
+		lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+		lvColumn.fmt = LVCFMT_LEFT;
+		lvColumn.cx = 200;
+		lvColumn.pszText = _T("Severity");
+		m_patientAllergyList.InsertColumn(2, &lvColumn);
+		for (int i = 0; i < parraySize; i++)
+		{
+			LVITEM lvItem;
+			int nItem;
+			CString text;
+			text.Format(L"%d", theApp.globalDrugArray[i].getDrugId());
+			lvItem.mask = LVIF_TEXT;
+			lvItem.iItem = 0;
+			lvItem.iSubItem = 0;
+			lvItem.pszText = text.GetBuffer();
+			nItem = m_patientAllergyList.InsertItem(&lvItem);
+
+			m_patientAllergyList.SetItemText(nItem, 1, theApp.globalDrugArray[i].getDrugName());
+			m_patientAllergyList.SetItemText(nItem, 2, theApp.severity[i]);
+		}
 	}
-
+	int darraySize = os.listDrugDrugInteraction(drug.getDrugId());
+	if(darraySize>0)
+	{
 	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
 	lvColumn.fmt = LVCFMT_LEFT;
 	lvColumn.cx = 120;
@@ -111,8 +114,8 @@ BOOL AllergyDisplay::OnInitDialog()
 	lvColumn.cx = 200;
 	lvColumn.pszText = _T("Severity");
 	m_drugAllergyList.InsertColumn(2, &lvColumn);
-	arraySize = os.listDrugDrugInteraction(drug.getDrugId());
-	for (int i = 0; i < arraySize; i++)
+
+	for (int i = 0; i < darraySize; i++)
 	{
 		LVITEM lvItem;
 		int nItem;
@@ -129,7 +132,7 @@ BOOL AllergyDisplay::OnInitDialog()
 	}
 
 	}
-	else
+	if(parraySize==0 && darraySize==0)
 	{
 		CDialogEx::OnOK();
 	}
