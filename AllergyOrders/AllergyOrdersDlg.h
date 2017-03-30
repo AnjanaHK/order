@@ -1,4 +1,3 @@
-
 // AllergyOrdersDlg.h : header file
 //
 
@@ -6,27 +5,33 @@
 #include "afxwin.h"
 #include "afxdtctl.h"
 //#include "resource.h"
-#include "OrdersGlobal.h"
 #include "afxcmn.h"
-#include "AllergyDisplay.h"
+#include "AllergyDisplayDlg.h"
+#include "SearchPatientDlg.h"
+#include "SearchDrugDlg.h"
+#include "InputValidator.h"
 // CAllergyOrdersDlg dialog
 class CAllergyOrdersDlg : public CDialogEx
 {
-// Construction
+private:
+	CArray<CPatient, CPatient&> m_patientArray;
+	CArray<CDrug, CDrug&> m_drugArray;
+
+	// Construction
 public:
-	
+
 	CAllergyOrdersDlg(CWnd* pParent = NULL);	// standard constructor
 
-// Dialog Data
+												// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ALLERGYORDERS_DIALOG };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 
-// Implementation
+														// Implementation
 protected:
 	HICON m_hIcon;
 	// Generated message map functions
@@ -36,18 +41,23 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnLvnItemchangedList3(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnEnChangeEdit2();
+	CEdit m_patientEdt;
+	CEdit m_drugEdt;
+	CDateTimeCtrl m_dateDTCtrl;
+	CListCtrl m_orderLstCtrl;
+	
+	CEdit m_commentCtrl;
 	afx_msg void OnBnClickedButton1();
-	CEdit patientCntrl;
-	CEdit drugCntrl;
-	CDateTimeCtrl dateCntrl;
-	afx_msg void OnEnChangeEdit1();
 	afx_msg void OnBnClickedButton2();
-	CListCtrl m_orderList;
-	afx_msg void OnBnClickedButton3();
-	Patient patient;
-	Drug drug;
-	CEdit m_comment;
 	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedButton3();
+	static int g_nDrugRecordSize;
+	static int g_nPatientRecordSize;
+	CMFCButton m_searchDrugBtn;
+	CMFCButton m_addBtn;
+	virtual void OnOK();
+	CButton m_orderBtn;
+	CMFCButton m_searchPatientBtn;
+	CFont m_font;
+	afx_msg void OnEnChangeEdit2();
 };

@@ -1,4 +1,3 @@
-
 // AllergyOrdersDlg.cpp : implementation file
 //
 
@@ -6,8 +5,6 @@
 #include "AllergyOrders.h"
 #include "AllergyOrdersDlg.h"
 #include "afxdialogex.h"
-#include "SearchPatientDlg.h"
-#include "SearchDrug.h"
 //#include "resource.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,15 +18,15 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation
+														// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
@@ -50,8 +47,8 @@ END_MESSAGE_MAP()
 
 
 // CAllergyOrdersDlg dialog
-
-
+int CAllergyOrdersDlg::g_nDrugRecordSize = 0;
+int CAllergyOrdersDlg::g_nPatientRecordSize = 0;
 
 CAllergyOrdersDlg::CAllergyOrdersDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_ALLERGYORDERS_DIALOG, pParent)
@@ -62,23 +59,26 @@ CAllergyOrdersDlg::CAllergyOrdersDlg(CWnd* pParent /*=NULL*/)
 void CAllergyOrdersDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_EDIT1, patientCntrl);
-	DDX_Control(pDX, IDC_EDIT2, drugCntrl);
-	DDX_Control(pDX, IDC_DATETIMEPICKER1, dateCntrl);
-	DDX_Control(pDX, IDC_LIST1, m_orderList);
-	DDX_Control(pDX, IDC_EDIT3, m_comment);
+	DDX_Control(pDX, IDC_EDIT1, m_patientEdt);
+	DDX_Control(pDX, IDC_EDIT2, m_drugEdt);
+	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_dateDTCtrl);
+	DDX_Control(pDX, IDC_LIST1, m_orderLstCtrl);
+	DDX_Control(pDX, IDC_EDIT3, m_commentCtrl);
+	DDX_Control(pDX, IDC_BUTTON2, m_searchDrugBtn);
+	DDX_Control(pDX, IDC_BUTTON3, m_addBtn);
+	DDX_Control(pDX, IDC_OK, m_orderBtn);
+	DDX_Control(pDX, IDC_BUTTON1, m_searchPatientBtn);
 }
 
 BEGIN_MESSAGE_MAP(CAllergyOrdersDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_EN_CHANGE(IDC_EDIT2, &CAllergyOrdersDlg::OnEnChangeEdit2)
 	ON_BN_CLICKED(IDC_BUTTON1, &CAllergyOrdersDlg::OnBnClickedButton1)
-	ON_EN_CHANGE(IDC_EDIT1, &CAllergyOrdersDlg::OnEnChangeEdit1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CAllergyOrdersDlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON3, &CAllergyOrdersDlg::OnBnClickedButton3)
-	ON_BN_CLICKED(IDOK, &CAllergyOrdersDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_OK, &CAllergyOrdersDlg::OnBnClickedOk)
+	ON_EN_CHANGE(IDC_EDIT2, &CAllergyOrdersDlg::OnEnChangeEdit2)
 END_MESSAGE_MAP()
 
 
@@ -86,8 +86,18 @@ END_MESSAGE_MAP()
 
 BOOL CAllergyOrdersDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	//setting font for buttons
+	LOGFONT lf;                        // Used to create the CFont.
 
+	CDialog::OnInitDialog();           // Call default ::OnInitDialog
+
+	memset(&lf, 0, sizeof(LOGFONT));   // Clear out structure.
+	lf.lfHeight = 20;                  // Request a 20-pixel-high font
+	strcpy_s(lf.lfFaceName, "Arial");    //    with face name "Arial".
+	m_font.CreateFontIndirect(&lf);    // Create the font
+	GetDlgItem(IDC_BUTTON1)->SetFont(&m_font); //set font for search patient
+	GetDlgItem(IDC_BUTTON2)->SetFont(&m_font);//set font for search drug
+	GetDlgItem(IDC_BUTTON3)->SetFont(&m_font);//set font for search drug
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -113,32 +123,65 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
-	LVCOLUMN lvColumn;
+	// set icon for search buttons
+	HICON searchIcon;
+	searchIcon = AfxGetApp()->LoadIcon(IDI_ICON2);
+	m_searchDrugBtn.SetIcon(searchIcon);
+	m_searchPatientBtn.SetIcon(searchIcon);
+	HICON addIcon;
+	addIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
+	//addIcon = (HICON)::LoadImage(GetModuleHandle("Wizards.dll"), MAKEINTRESOURCE(IDC_BUTTON3), IDI_ICON1, 16, 16, 0);
+	//addIcon = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON,::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), 0);
+	m_addBtn.SetIcon(addIcon);
+	///////////
+	//CMFCButton* appButton = new CMFCButton;
+	//m_searchPatientBtn.cre
+	//m_searchPatientBtn.Create(_T("MfcButton1"), WS_CHILD | WS_VISIBLE, CRect(10, 10, 70, 50), this);
+	//m_searchPatientBtn.SetIcon(searchIcon);
+	//CFont* font1;
+	// in a LOGFONT structure.
+	//LOGFONT lf;
+	// clear out structure
+//	memset(&lf, 0, sizeof(LOGFONT));
+	// request a 12-pixel-height font
+	//lf.lfHeight = 50;
+	// request a face name "Arial"
+	//_tcsncpy_s(lf.lfFaceName, LF_FACESIZE, _T("Arial"), 20);
 
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 120;
-	lvColumn.pszText = _T("Patient Name");
-	m_orderList.InsertColumn(0, &lvColumn);
+	//CFont font1;
+	//font1.CreateFontIndirect(&lf);  // create the font
 
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 200;
-	lvColumn.pszText = _T("Drug Name");
-	m_orderList.InsertColumn(1, &lvColumn);
+	//LOGFONT lf;                        // Used to create the CFont.
+	//font1=GetFont();
+	//CFont *currentFont = GetFont();
+	//font1->GetLogFont(&lf);
+	//lf.lfHeight = 20;
+	//font_.DeleteObject();
+	//font1->CreateFontIndirect(&lf);    // Create the font.
 
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 200;
-	lvColumn.pszText = _T("Date");
-	m_orderList.InsertColumn(2, &lvColumn);
+									  // Use the font to paint a control.
+	//SetFont(&font_);
+	//m_searchPatientBtn.SetFont(font1,true);
+	//m_searchPatientBtn
+		//appButton->GetStyle();
 
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 200;
-	lvColumn.pszText = _T("Comment");
-	m_orderList.InsertColumn(3, &lvColumn);
+
+	/*
+	The following code will set headings for the list control which displays the orders to be placed.
+	*/
+	try
+	{
+		m_orderLstCtrl.InsertColumn(0, _T("Patient Name"), LVCFMT_LEFT,150);
+		m_orderLstCtrl.InsertColumn(1, _T("Drug Name"), LVCFMT_LEFT,200);
+		m_orderLstCtrl.InsertColumn(2, _T("Date"), LVCFMT_LEFT, 150);
+		m_orderLstCtrl.InsertColumn(3, _T("Comment"), LVCFMT_LEFT, 200);
+	}
+	catch (CException* e)
+	{
+		MessageBox(_T("Error creating List Control"));
+		e->Delete();
+		this->DestroyWindow();
+	}
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -191,13 +234,263 @@ HCURSOR CAllergyOrdersDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CAllergyOrdersDlg::OnLvnItemchangedList3(NMHDR *pNMHDR, LRESULT *pResult)
+/*
+This method will get the text entered in the Edit control-m_patientCtrl and call SearchPatientDlg class.
+SearchPatientDlg is the dialog class containing MFC dialog to search for a patient.
+If user selects a patient from the list in SearchPatientDlg dialog then value selected is mapped into a patient object of this class and patient name is diaplayed in edit control-m_patientCtrl.
+*/
+void CAllergyOrdersDlg::OnBnClickedButton1()
 {
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	*pResult = 0;
+	CInputValidator validator;
+	CString sPatientName;
+	m_patientEdt.GetWindowText(sPatientName);
+	sPatientName.Trim(); 
+	if (validator.CheckValid(sPatientName))
+	{
+		try
+		{
+			int nRowsize;
+			COrderService orderService;
+			nRowsize = orderService.SearchPatient(sPatientName,true);
+			if (nRowsize == 0)
+			{
+				MessageBox("No entries with this name.");
+				return;
+			}
+			SearchPatientDlg searchPatientDialogObj(this);
+			searchPatientDialogObj.m_sPatientName = sPatientName;
+
+			INT_PTR nResponse = searchPatientDialogObj.DoModal();
+			if (nResponse == IDOK)
+			{
+				m_patientArray.SetAtGrow(g_nPatientRecordSize + 1, searchPatientDialogObj.m_patient);
+				m_patientEdt.SetWindowText(m_patientArray[g_nPatientRecordSize + 1].GetPatientName());
+				searchPatientDialogObj.DestroyWindow();
+				m_searchDrugBtn.EnableWindow(true);
+			}
+			else if (nResponse == IDCANCEL)
+			{
+				searchPatientDialogObj.DestroyWindow();
+			}
+
+		}
+		catch (CException* e)
+		{
+			MessageBox(_T("Error in patient search"));
+			e->Delete();
+		}
+	}
+	else
+	{
+		MessageBox("Invalid Entry.\nEnter valid patient name.");
+	}
+}
+
+
+/*
+This method will get the text entered in the Edit control-m_drugCtrl and call SearchDrugDlg dialog class.
+SearchDrugis the dialog class containing MFC dialog to search for a drug.
+If user selects a drug from the list in SearchDrugDlg dialog then value selected is mapped into a drug object array of this class and current drug name is diaplayed in edit control-m_DrugCtrl.
+g_iDrugRecordSize points to current drug object position. To add new object to the array it is made to point to +1 position.
+*/
+
+void CAllergyOrdersDlg::OnBnClickedButton2()
+{
+	CInputValidator validator;
+	CString sDrugName;
+	m_drugEdt.GetWindowText(sDrugName);
+	sDrugName.Trim();
+	if (validator.CheckValid(sDrugName))
+	{
+		try {
+			int nRowsize;
+			COrderService orderService;
+			nRowsize = orderService.SearchDrug(sDrugName, true);
+			if (nRowsize == 0)
+			{
+				MessageBox("No entries with this name.");
+				return;
+			}
+			SearchDrugDlg searchDrugDlgObj(this);
+			searchDrugDlgObj.m_sDrugName = sDrugName;
+			INT_PTR nResponse = searchDrugDlgObj.DoModal();
+			if (nResponse == IDOK)
+			{
+				m_drugArray.SetAtGrow(g_nDrugRecordSize + 1, searchDrugDlgObj.m_drug);
+				m_drugEdt.SetWindowText(m_drugArray[g_nDrugRecordSize + 1].GetDrugName());
+				searchDrugDlgObj.DestroyWindow();
+				m_addBtn.EnableWindow(true);
+			}
+			else if (nResponse == IDCANCEL)
+			{
+				searchDrugDlgObj.DestroyWindow();
+			}
+		}
+		catch (CException* e)
+		{
+			MessageBox(_T("Error in drug search"));
+			e->Delete();
+		}
+	}
+}
+
+
+INT_PTR CAboutDlg::DoModal()
+{
+	return CDialogEx::DoModal();
+}
+
+/*
+The following method:
+#1. if search has not been used.
+	This method will get the text entered in the Edit controls-m_patientCtrl and m_drugCtrl.
+	then it will check if ptient and drug with that name exists.
+	#1.1	if both patient and drug exist without any duplicates then the method will add it to list control-m_orderListCtrl
+	#1.2	if either patient or drug is not present or more than one record is present for any of them then method returns to AllergyOrderDlg dialog class.
+#2. if search has been used for patient or drug then the respective objects would have already been mapped.
+	in that case, values will be directly added to list control-m_orderListCtrl.
+	*/
+
+void CAllergyOrdersDlg::OnBnClickedButton3()
+{
+	CString sComment;
+	m_commentCtrl.GetWindowText(sComment);
+	if (sComment.GetLength() > 100)
+	{
+		MessageBox("Max length for comment: 100 characters.");
+		return;
+	}
+	AllergyDisplayDlg allergyDisplayDlgObj(this);
+	allergyDisplayDlgObj.m_patient = m_patientArray[g_nPatientRecordSize + 1];
+	allergyDisplayDlgObj.m_drug = m_drugArray[g_nDrugRecordSize + 1];
+	INT_PTR nResponse = allergyDisplayDlgObj.DoModal(m_drugArray,m_patientArray);
+	if (nResponse == IDOK)
+	{
+		int nItem;
+		CTime dateCt;
+		CString sDate;
+		allergyDisplayDlgObj.DestroyWindow();
+		//setting orderList with items.
+		nItem = m_orderLstCtrl.InsertItem(0,m_patientArray[g_nPatientRecordSize + 1].GetPatientName());
+		m_orderLstCtrl.SetItemText(nItem, 1, m_drugArray[g_nDrugRecordSize + 1].GetDrugName());
+		m_dateDTCtrl.GetTime(dateCt);
+		sDate = dateCt.Format("%Y-%m-%d");
+		m_orderLstCtrl.SetItemText(nItem, 2, sDate);
+		m_orderLstCtrl.SetItemText(nItem, 3, sComment);
+		g_nDrugRecordSize++;
+		g_nPatientRecordSize++;
+		m_orderBtn.EnableWindow(true);
+	}
+	else if (nResponse == IDCANCEL)
+	{
+		allergyDisplayDlgObj.DestroyWindow();
+	}
+}
+
+/*
+This method is called when order button is clicked.
+It inserts the order details  into the order table.
+*/
+void CAllergyOrdersDlg::OnBnClickedOk()
+{
+	//OnOK();
+	COrderService orderService;
+	CString sDate;
+	CString sComment;
+	int iPatientId, iDrugId;
+	if (g_nDrugRecordSize != 0)
+	{
+		try
+		{
+			for (int i = 0; i < m_orderLstCtrl.GetItemCount(); i++)
+			{
+				iPatientId = _ttoi(m_orderLstCtrl.GetItemText(i, 0));
+				iDrugId = _ttoi(m_orderLstCtrl.GetItemText(i, 1));
+				sDate = m_orderLstCtrl.GetItemText(i, 2);
+				sComment = m_orderLstCtrl.GetItemText(i, 3);
+				orderService.SaveOrders(m_patientArray[i + 1].GetPatientId(), m_drugArray[i + 1].GetDrugId(), sDate, sComment);
+			}
+			MessageBox(_T("Order placed sucessfully"));
+		}
+		catch (CException* e)
+		{
+			MessageBox(_T("Error in placing order."));
+			e->Delete();
+		}
+	}
+	else
+	{
+		MessageBox("Invalid Entry");
+	}
+	CDialogEx::OnOK();
+}
+
+
+void CAllergyOrdersDlg::OnOK()
+{
+	// TODO: Add your specialized code here and/or call the base class
+	CWnd* pwndCtrl = GetFocus();
+	CWnd* pwndCtrlNext = pwndCtrl;
+	int ctrl_ID = pwndCtrl->GetDlgCtrlID();
+
+	CString sFromPatientCtrl;
+	int iRowSize;
+	COrderService orderService;
+	CInputValidator validator;
+	CString sFromDrugCtrl;
+	switch (ctrl_ID) {
+	case IDC_EDIT1:
+		m_patientEdt.GetWindowText(sFromPatientCtrl);
+		if (sFromPatientCtrl.IsEmpty() | !validator.CheckValid(sFromPatientCtrl))
+		{
+			MessageBox("Invalid patient entry.");
+			return;
+		}
+		iRowSize = orderService.SearchPatient(sFromPatientCtrl, false);
+		if (iRowSize == 0)
+		{
+			//no patient record available with the entered name
+			MessageBox(_T("No patient with this name. Please search and select a patient."));
+			return;
+		}
+		else
+		{
+			//refer to patient object present in global array
+			m_patientArray.SetAtGrow(g_nPatientRecordSize + 1, theApp.m_patientArray[1]);
+			m_searchDrugBtn.EnableWindow(true);
+			m_drugEdt.SetFocus();
+		}
+
+		break;
+	case IDC_EDIT2:
+		m_drugEdt.GetWindowText(sFromDrugCtrl);
+		if (sFromDrugCtrl.IsEmpty() | !validator.CheckValid(sFromDrugCtrl))
+		{
+			MessageBox("Invalid drug entry.");
+			return;
+		}
+		iRowSize = orderService.SearchDrug(sFromDrugCtrl, false);
+		if (iRowSize == 0)
+		{
+			MessageBox(_T("No drug with this name. Please search and select a drug."));
+			return;
+		}
+		else
+		{
+			m_drugArray.SetAtGrow(g_nDrugRecordSize + 1, theApp.m_drugArray[1]);
+			m_addBtn.EnableWindow(true);
+			m_dateDTCtrl.SetFocus();
+		}
+		break;
+	case IDC_DATETIMEPICKER1:
+		m_commentCtrl.SetFocus();
+		break;
+	case IDC_EDIT3:
+		m_addBtn.SetFocus();
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -209,115 +502,4 @@ void CAllergyOrdersDlg::OnEnChangeEdit2()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
-}
-
-
-void CAllergyOrdersDlg::OnBnClickedButton1()
-{
-	// TODO: Add your control notification handler code here
-	CString sName;
-	SearchPatientDlg spd(this);
-	patientCntrl.GetWindowText(sName);
-
-	spd.name = sName;
-	
-	/*INT_PTR nResponse = spd.DoModal();
-	if (nResponse == IDOK)
-	{
-		spd.DestroyWindow();
-	}
-	else if (nResponse == IDCANCEL)
-	{
-		spd.DestroyWindow();
-	}
-	//this->DoModal();*/
-	spd.DoModal();
-	patient = spd.patient;
-	patientCntrl.SetWindowTextW(patient.getPatientName());
-}
-
-
-void CAllergyOrdersDlg::OnEnChangeEdit1()
-{
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
-	// TODO:  Add your control notification handler code here
-}
-
-
-void CAllergyOrdersDlg::OnBnClickedButton2()
-{
-	// TODO: Add your control notification handler code here
-	CString dName;
-	drugCntrl.GetWindowTextW(dName);
-	SearchDrug sd(this);
-	sd.drugName = dName;
-	sd.DoModal();
-	drug = sd.drug;
-	drugCntrl.SetWindowTextW(drug.getDrugName());
-}
-
-
-INT_PTR CAboutDlg::DoModal()
-{
-	// TODO: Add your specialized code here and/or call the base class
-
-	return CDialogEx::DoModal();
-}
-
-
-void CAllergyOrdersDlg::OnBnClickedButton3()
-{
-	// TODO: Add your control notification handler code here
-	AllergyDisplay ad(this);
-	ad.patient = patient;
-	ad.drug = drug;
-	INT_PTR nResponse = ad.DoModal();
-	if (nResponse == IDOK)
-	{
-		ad.DestroyWindow();
-		LVITEM lvItem;
-		int nItem;
-		lvItem.mask = LVIF_TEXT;
-		lvItem.iItem = 0;
-		lvItem.iSubItem = 0;
-		lvItem.pszText = (LPWSTR)patient.getPatientName().GetString();
-		nItem = m_orderList.InsertItem(&lvItem);
-		
-		m_orderList.SetItemText(nItem, 1, drug.getDrugName());
-		CTime dateVar;
-		dateCntrl.GetTime(dateVar);
-		CString date = dateVar.Format("%Y-%m-%d");
-		m_orderList.SetItemText(nItem, 2, date);
-		CString comment;
-		m_comment.GetWindowTextW(comment);
-		m_orderList.SetItemText(nItem, 3,comment);
-	}
-	else if (nResponse == IDCANCEL)
-	{
-		ad.DestroyWindow();
-	}
-}
-
-
-void CAllergyOrdersDlg::OnBnClickedOk()
-{
-	// TODO: Add your control notification handler code here
-	orderService os;
-	CString date,comment;
-	int pid, did;
-	for (int i = 0; i < m_orderList.GetItemCount(); i++)
-	{
-		pid = _wtoi(m_orderList.GetItemText(i, 0));
-		did = _wtoi(m_orderList.GetItemText(i, 1));	
-		date = m_orderList.GetItemText(i, 2);
-		comment = m_orderList.GetItemText(i, 3);
-		os.saveOrders(patient.getPatientId(), drug.getDrugId(), date, comment);
-	}
-
-	MessageBox(_T("entered data to table"));
-	CDialogEx::OnOK();
 }

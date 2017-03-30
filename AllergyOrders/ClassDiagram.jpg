@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CDBConnection">
+    <Position X="9.75" Y="3.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAwAAIIAABBAAAAAhCAAQAAAAAAAEAAAAAAAQg=</HashCode>
+      <FileName>CDBConnection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="COrderService">
+    <Position X="7.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAQAAAAAAAABACAAAAEAAAAAAAAAIAAAAAABA=</HashCode>
+      <FileName>COrderService.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CPatient">
+    <Position X="4.25" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIAACAAAAAAAEAAAAAAAAAACAQAAAAAAEAAAAIAAA=</HashCode>
+      <FileName>CPatient.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CDrug">
+    <Position X="7" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAECgAAAAAAAAAAAAAAAAQAAAAAAAAAAAACBAAAAIAA=</HashCode>
+      <FileName>CDrug.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAllergyOrdersApp">
+    <Position X="7.5" Y="8" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAgAAAAAAAAAQBAAAIAAAAAAA=</HashCode>
+      <FileName>AllergyOrders.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAllergyOrdersDlg">
+    <Position X="10" Y="8" Width="2.5" />
+    <NestedTypes>
+      <Enum Name="CAllergyOrdersDlg::__unnamed_enum_0006_1">
+        <TypeIdentifier>
+          <NewMemberFileName>AllergyOrdersDlg.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>kACAAAEAAAAAAAAIEBCAAABQAAAAACQAAAAMAAAQBAA=</HashCode>
+      <FileName>AllergyOrdersDlg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchPatientDlg">
+    <Position X="4.25" Y="10.5" Width="2" />
+    <NestedTypes>
+      <Enum Name="SearchPatientDlg::__unnamed_enum_0013_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>SearchPatientDlg.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CAAIAAGAAAAAAgAAABAAAAAQQAAAAAAAAAAEAAAAABA=</HashCode>
+      <FileName>SearchPatientDlg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchDrugDlg">
+    <Position X="6.5" Y="10.5" Width="2" />
+    <NestedTypes>
+      <Enum Name="SearchDrugDlg::__unnamed_enum_0011_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>SearchDrugDlg.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAgCAEAACAAAgAAABAAAAAAAAAAAAAAAACEAAAAIAA=</HashCode>
+      <FileName>SearchDrugDlg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AllergyDisplayDlg">
+    <Position X="9.5" Y="13.25" Width="2.25" />
+    <NestedTypes>
+      <Enum Name="AllergyDisplayDlg::__unnamed_enum_0002_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>AllergyDisplayDlg.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IAAACwEAAAAAAAIAABAAgABQAAAAAQAEAAAGICAAABA=</HashCode>
+      <FileName>AllergyDisplayDlg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

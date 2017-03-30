@@ -33,28 +33,28 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Patient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DBConnection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SearchPatientDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="orderService.h">
+    <ClInclude Include="SearchDrugDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OrdersGlobal.h">
+    <ClInclude Include="AllergyDisplayDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SearchDrug.h">
+    <ClInclude Include="CDrug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Drug.h">
+    <ClInclude Include="COrderService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AllergyDisplay.h">
+    <ClInclude Include="CPatient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDBConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InputValidator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,28 +68,28 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Patient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DBConnection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SearchPatientDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="orderService.cpp">
+    <ClCompile Include="SearchDrugDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OrdersGlobal.cpp">
+    <ClCompile Include="AllergyDisplayDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SearchDrug.cpp">
+    <ClCompile Include="CDrug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Drug.cpp">
+    <ClCompile Include="COrderService.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AllergyDisplay.cpp">
+    <ClCompile Include="CPatient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CDBConnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,6 +105,45 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\AllergyOrders.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Downloads\project icons\Zoom-icon (1).png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Downloads\project icons\Awicons-Vista-Artistic-Search.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\downloads\project icons\icon2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Downloads\project icons\1489501231_system-search.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\project icons\Awicons-Vista-Artistic-Search.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\project icons\1489501231_system-search.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\1489598690_plus.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\plus.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\1489600127_Plus.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\downloads\project icons\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\1489600054_basics-15.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Downloads\1489600042_add.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

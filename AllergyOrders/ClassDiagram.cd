@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CDBConnection">
+    <Position X="6" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAwAAIIAABBAAAAAhCAAQAAAAAAAEAAAAAAAQg=</HashCode>
+      <FileName>CDBConnection.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="COrderService">
+    <Position X="3.75" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAQAAAAAAAABACAAAAEAAAAAAAAAIAAAAAABA=</HashCode>
+      <FileName>COrderService.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CPatient">
+    <Position X="0.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIAACAAAAAAAEAAAAAAAAAACAQAAAAAAEAAAAIAAA=</HashCode>
+      <FileName>CPatient.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CDrug">
+    <Position X="3.25" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAECgAAAAAAAAAAAAAAAAQAAAAAAAAAAAACBAAAAIAA=</HashCode>
+      <FileName>CDrug.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

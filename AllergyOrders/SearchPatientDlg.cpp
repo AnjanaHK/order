@@ -22,7 +22,7 @@ SearchPatientDlg::~SearchPatientDlg()
 void SearchPatientDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST3, patientList);
+	DDX_Control(pDX, IDC_LIST3, m_patientLstCtrl);
 }
 
 
@@ -33,75 +33,59 @@ END_MESSAGE_MAP()
 
 
 // SearchPatientDlg message handlers
-
-
-void SearchPatientDlg::OnBnClickedButton1()
-{
-	// TODO: Add your control notification handler code here
-
-}
-
+/*
+The following method is called when ok button is clicked.
+#1. If an item is selected then it is mapped to global variable-m_pPatient
+#2. Else a message box is displayed requesting the user to select an item or cancel the search.
+*/
 
 void SearchPatientDlg::OnBnClickedOk()
 {
-	// TODO: Add your control notification handler code here
-	//this->ShowWindow(SW_HIDE);
 	
+	POSITION pos = m_patientLstCtrl.GetFirstSelectedItemPosition();
+	if (pos == NULL)
+	{
+		MessageBox(_T("No patient was selected. Please select a patient from the list or cancel the search."));
+		return;
+	}
+	else
+	{
+			int nItem = m_patientLstCtrl.GetNextSelectedItem(pos);
+			m_patient = theApp.m_patientArray[m_nRecordSize - nItem];
+	}
 	CDialogEx::OnOK();
 }
 
 
 void SearchPatientDlg::OnBnClickedCancel()
 {
-	// TODO: Add your control notification handler code here
 	CDialogEx::OnCancel();
 }
 
+/*
+This method is called to initialize the dialog.
+Here the patient list displaying patients whose name match with the text entered in AllergyOrderDlg Dialog is loaded with headers
+and data.
+When DoModal() is called the dialog will be displayed with preloaded data and user has to select any one of the patient from the list.
 
-
-
+*/
 BOOL SearchPatientDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// TODO:  Add extra initialization here
-	int i= 0;
-	//vector<Patient> p;
-	Patient* p;
-	orderService os;
-	p = os.searchPatient(name);
-	LVCOLUMN lvColumn;
-
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 120;
-	lvColumn.pszText = _T("Patient ID");
-	patientList.InsertColumn(0, &lvColumn);
-
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 200;
-	lvColumn.pszText = _T("Name");
-	patientList.InsertColumn(1, &lvColumn);
-	//for(Patient pat : p) 
-	//{
-		CString text;
-		text.Format(L"%d", p[0].getPatientId());
-		//text.Append(p[0].getPatientName());
-		//searchCntrl.SetWindowText(text);
-		
-		LVITEM lvItem;
+	m_patientLstCtrl.SetExtendedStyle(m_patientLstCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
+	COrderService orderService;
+	m_nRecordSize = orderService.SearchPatient(m_sPatientName,true);
+	m_patientLstCtrl.InsertColumn(0, _T("Patient ID"),LVCFMT_LEFT,150); //set list
+	m_patientLstCtrl.InsertColumn(1, _T("Name"), LVCFMT_LEFT,200);
+	for(int i=1;i<=m_nRecordSize;i++) 
+	{
 		int nItem;
-
-		lvItem.mask = LVIF_TEXT;
-		lvItem.iItem = 0;
-		lvItem.iSubItem = 0;
-		lvItem.pszText = text.GetBuffer();
-		nItem = patientList.InsertItem(&lvItem);
-
-		patientList.SetItemText(nItem, 1, p[0].getPatientName());
-	//}
-	patient = p[0];
+		CString text;
+		text.Format(_T("%d"), theApp.m_patientArray[i].GetPatientId());
+		nItem = m_patientLstCtrl.InsertItem(0, text);
+		m_patientLstCtrl.SetItemText(nItem, 1, theApp.m_patientArray[i].GetPatientName());
+	}
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
 }
