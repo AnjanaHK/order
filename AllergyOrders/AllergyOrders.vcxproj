@@ -230,8 +230,11 @@
     <Image Include="..\..\..\..\Downloads\1489600127_Plus.ico" />
     <Image Include="..\..\..\..\Downloads\plus.ico" />
     <Image Include="..\..\..\..\Downloads\project icons\1489501231_system-search.ico" />
+    <Image Include="..\..\..\..\Downloads\project icons\1489600042_add.ico" />
+    <Image Include="..\..\..\..\Downloads\project icons\1494845650_icon-minus-round.ico" />
     <Image Include="..\..\..\..\Downloads\project icons\Awicons-Vista-Artistic-Search.ico" />
     <Image Include="..\..\..\..\downloads\project icons\icon1.ico" />
+    <Image Include="..\..\..\..\Downloads\project icons\minus-round.png" />
     <Image Include="..\..\Downloads\project icons\1489501231_system-search.ico" />
     <Image Include="..\..\Downloads\project icons\Awicons-Vista-Artistic-Search.ico" />
     <Image Include="..\..\downloads\project icons\icon2.ico" />

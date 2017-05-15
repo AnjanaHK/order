@@ -68,6 +68,7 @@ void CAllergyOrdersDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON3, m_addBtn);
 	DDX_Control(pDX, IDC_OK, m_orderBtn);
 	DDX_Control(pDX, IDC_BUTTON1, m_searchPatientBtn);
+	DDX_Control(pDX, IDC_BUTTON4, m_removeBtn);
 }
 
 BEGIN_MESSAGE_MAP(CAllergyOrdersDlg, CDialogEx)
@@ -79,6 +80,8 @@ BEGIN_MESSAGE_MAP(CAllergyOrdersDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CAllergyOrdersDlg::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_OK, &CAllergyOrdersDlg::OnBnClickedOk)
 	ON_EN_CHANGE(IDC_EDIT2, &CAllergyOrdersDlg::OnEnChangeEdit2)
+	ON_NOTIFY(NM_CLICK, IDC_LIST1, &CAllergyOrdersDlg::OnNMClickList1)
+	ON_BN_CLICKED(IDC_BUTTON4, &CAllergyOrdersDlg::OnBnClickedButton4)
 END_MESSAGE_MAP()
 
 
@@ -97,7 +100,8 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 	m_font.CreateFontIndirect(&lf);    // Create the font
 	GetDlgItem(IDC_BUTTON1)->SetFont(&m_font); //set font for search patient
 	GetDlgItem(IDC_BUTTON2)->SetFont(&m_font);//set font for search drug
-	GetDlgItem(IDC_BUTTON3)->SetFont(&m_font);//set font for search drug
+	GetDlgItem(IDC_BUTTON3)->SetFont(&m_font);//set font for add order
+	GetDlgItem(IDC_BUTTON4)->SetFont(&m_font);//set font for remove order
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -133,6 +137,9 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 	//addIcon = (HICON)::LoadImage(GetModuleHandle("Wizards.dll"), MAKEINTRESOURCE(IDC_BUTTON3), IDI_ICON1, 16, 16, 0);
 	//addIcon = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON,::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), 0);
 	m_addBtn.SetIcon(addIcon);
+	HICON minusIcon;
+	minusIcon = AfxGetApp()->LoadIcon(IDI_ICON3);
+	m_removeBtn.SetIcon(minusIcon);
 	///////////
 	//CMFCButton* appButton = new CMFCButton;
 	//m_searchPatientBtn.cre
@@ -169,6 +176,7 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 	/*
 	The following code will set headings for the list control which displays the orders to be placed.
 	*/
+	m_orderLstCtrl.SetExtendedStyle(m_orderLstCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
 	try
 	{
 		m_orderLstCtrl.InsertColumn(0, _T("Patient Name"), LVCFMT_LEFT,150);
@@ -397,18 +405,21 @@ void CAllergyOrdersDlg::OnBnClickedOk()
 	COrderService orderService;
 	CString sDate;
 	CString sComment;
-	int iPatientId, iDrugId;
+	//int iPatientId, iDrugId;
 	if (g_nDrugRecordSize != 0)
 	{
 		try
 		{
-			for (int i = 0; i < m_orderLstCtrl.GetItemCount(); i++)
+			int j = 1;
+			for (int i = 0; i < m_orderLstCtrl.GetItemCount();j++, i++)
 			{
-				iPatientId = _ttoi(m_orderLstCtrl.GetItemText(i, 0));
-				iDrugId = _ttoi(m_orderLstCtrl.GetItemText(i, 1));
+				//iPatientId = _ttoi(m_orderLstCtrl.GetItemText(i, 0));
+				//iDrugId = _ttoi(m_orderLstCtrl.GetItemText(i, 1));
 				sDate = m_orderLstCtrl.GetItemText(i, 2);
 				sComment = m_orderLstCtrl.GetItemText(i, 3);
-				orderService.SaveOrders(m_patientArray[i + 1].GetPatientId(), m_drugArray[i + 1].GetDrugId(), sDate, sComment);
+				while (m_patientArray[j].GetPatientId() == NULL) 
+					j++;
+				orderService.SaveOrders(m_patientArray[j].GetPatientId(), m_drugArray[j].GetDrugId(), sDate, sComment);
 			}
 			MessageBox(_T("Order placed sucessfully"));
 		}
@@ -502,4 +513,52 @@ void CAllergyOrdersDlg::OnEnChangeEdit2()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
+}
+
+
+
+
+
+
+
+
+
+void CAllergyOrdersDlg::OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	POSITION pos = m_orderLstCtrl.GetFirstSelectedItemPosition();
+	if (pos == NULL)
+	{
+		m_removeBtn.EnableWindow(false);
+	}
+	else
+		m_removeBtn.EnableWindow(true);
+	*pResult = 0;
+}
+
+
+void CAllergyOrdersDlg::OnBnClickedButton4()
+{
+	// TODO: Add your control notification handler code here
+	POSITION pos = m_orderLstCtrl.GetFirstSelectedItemPosition();
+	if (pos == NULL)
+	{
+		MessageBox(_T("No patient was selected. Please select a patient from the list or cancel the search."));
+		return;
+	}
+	else
+	{
+		CString msg = _T("Do you want to delete the order?");
+		CString title = _T("Confirm");
+		if (MessageBoxA(msg,title,MB_YESNO) == IDYES)
+		{
+			int item = m_orderLstCtrl.GetNextSelectedItem(pos);
+			m_orderLstCtrl.DeleteItem(item);
+			m_patientArray.RemoveAt(item,1);
+			m_drugArray.RemoveAt(item, 1);
+		}
+			int nItem = m_orderLstCtrl.GetNextSelectedItem(pos);
+			
+	}
 }

@@ -60,4 +60,7 @@ public:
 	CMFCButton m_searchPatientBtn;
 	CFont m_font;
 	afx_msg void OnEnChangeEdit2();
+	CMFCButton m_removeBtn;
+	afx_msg void OnNMClickList1(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedButton4();
 };
