@@ -82,6 +82,7 @@ BEGIN_MESSAGE_MAP(CAllergyOrdersDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT2, &CAllergyOrdersDlg::OnEnChangeEdit2)
 	ON_NOTIFY(NM_CLICK, IDC_LIST1, &CAllergyOrdersDlg::OnNMClickList1)
 	ON_BN_CLICKED(IDC_BUTTON4, &CAllergyOrdersDlg::OnBnClickedButton4)
+	ON_EN_UPDATE(IDC_EDIT1, &CAllergyOrdersDlg::OnEnUpdateEdit1)
 END_MESSAGE_MAP()
 
 
@@ -89,19 +90,9 @@ END_MESSAGE_MAP()
 
 BOOL CAllergyOrdersDlg::OnInitDialog()
 {
-	//setting font for buttons
-	LOGFONT lf;                        // Used to create the CFont.
 
 	CDialog::OnInitDialog();           // Call default ::OnInitDialog
-
-	memset(&lf, 0, sizeof(LOGFONT));   // Clear out structure.
-	lf.lfHeight = 20;                  // Request a 20-pixel-high font
-	strcpy_s(lf.lfFaceName, "Arial");    //    with face name "Arial".
-	m_font.CreateFontIndirect(&lf);    // Create the font
-	GetDlgItem(IDC_BUTTON1)->SetFont(&m_font); //set font for search patient
-	GetDlgItem(IDC_BUTTON2)->SetFont(&m_font);//set font for search drug
-	GetDlgItem(IDC_BUTTON3)->SetFont(&m_font);//set font for add order
-	GetDlgItem(IDC_BUTTON4)->SetFont(&m_font);//set font for remove order
+	setFont();
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -127,19 +118,9 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// set icon for search buttons
-	HICON searchIcon;
-	searchIcon = AfxGetApp()->LoadIcon(IDI_ICON2);
-	m_searchDrugBtn.SetIcon(searchIcon);
-	m_searchPatientBtn.SetIcon(searchIcon);
-	HICON addIcon;
-	addIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
-	//addIcon = (HICON)::LoadImage(GetModuleHandle("Wizards.dll"), MAKEINTRESOURCE(IDC_BUTTON3), IDI_ICON1, 16, 16, 0);
-	//addIcon = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON,::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), 0);
-	m_addBtn.SetIcon(addIcon);
-	HICON minusIcon;
-	minusIcon = AfxGetApp()->LoadIcon(IDI_ICON3);
-	m_removeBtn.SetIcon(minusIcon);
+	setIcon(); //Set icons for buttons
+
+	setList();	//set list
 	///////////
 	//CMFCButton* appButton = new CMFCButton;
 	//m_searchPatientBtn.cre
@@ -173,23 +154,7 @@ BOOL CAllergyOrdersDlg::OnInitDialog()
 		//appButton->GetStyle();
 
 
-	/*
-	The following code will set headings for the list control which displays the orders to be placed.
-	*/
-	m_orderLstCtrl.SetExtendedStyle(m_orderLstCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
-	try
-	{
-		m_orderLstCtrl.InsertColumn(0, _T("Patient Name"), LVCFMT_LEFT,150);
-		m_orderLstCtrl.InsertColumn(1, _T("Drug Name"), LVCFMT_LEFT,200);
-		m_orderLstCtrl.InsertColumn(2, _T("Date"), LVCFMT_LEFT, 150);
-		m_orderLstCtrl.InsertColumn(3, _T("Comment"), LVCFMT_LEFT, 200);
-	}
-	catch (CException* e)
-	{
-		MessageBox(_T("Error creating List Control"));
-		e->Delete();
-		this->DestroyWindow();
-	}
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -388,6 +353,9 @@ void CAllergyOrdersDlg::OnBnClickedButton3()
 		g_nDrugRecordSize++;
 		g_nPatientRecordSize++;
 		m_orderBtn.EnableWindow(true);
+		m_patientEdt.SetWindowText("");
+		m_drugEdt.SetWindowText("");
+		m_commentCtrl.SetWindowText("");
 	}
 	else if (nResponse == IDCANCEL)
 	{
@@ -440,7 +408,7 @@ void CAllergyOrdersDlg::OnBnClickedOk()
 void CAllergyOrdersDlg::OnOK()
 {
 	// TODO: Add your specialized code here and/or call the base class
-	CWnd* pwndCtrl = GetFocus();
+/*	CWnd* pwndCtrl = GetFocus();
 	CWnd* pwndCtrlNext = pwndCtrl;
 	int ctrl_ID = pwndCtrl->GetDlgCtrlID();
 
@@ -501,7 +469,7 @@ void CAllergyOrdersDlg::OnOK()
 		break;
 	default:
 		break;
-	}
+	}*/
 }
 
 
@@ -513,6 +481,24 @@ void CAllergyOrdersDlg::OnEnChangeEdit2()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
+	CString sFromDrugCtrl;
+	int iRowSize;
+	COrderService orderService;
+	m_drugEdt.GetWindowText(sFromDrugCtrl);
+	if (sFromDrugCtrl.IsEmpty() | (sFromDrugCtrl.GetLength() <3))
+	{
+		return;
+	}
+	iRowSize = orderService.SearchDrug(sFromDrugCtrl, true);
+	if (iRowSize == 1)
+	{
+		m_drugArray.SetAtGrow(g_nDrugRecordSize + 1, theApp.m_drugArray[1]);
+		m_drugEdt.SetWindowText(theApp.m_drugArray[1].GetDrugName());
+		m_addBtn.EnableWindow(true);
+		
+	}
+	
+	return;
 }
 
 
@@ -561,4 +547,92 @@ void CAllergyOrdersDlg::OnBnClickedButton4()
 			int nItem = m_orderLstCtrl.GetNextSelectedItem(pos);
 			
 	}
+}
+
+
+///////////////////////////////////////////////////
+////////////////////Functions
+//////////////////////////////////////
+
+void CAllergyOrdersDlg::setFont()
+{
+	//setting font for buttons
+	LOGFONT lf;                        // Used to create the CFont.
+
+
+	memset(&lf, 0, sizeof(LOGFONT));   // Clear out structure.
+	lf.lfHeight = 20;                  // Request a 20-pixel-high font
+	strcpy_s(lf.lfFaceName, "Arial");    //    with face name "Arial".
+	m_font.CreateFontIndirect(&lf);    // Create the font
+	GetDlgItem(IDC_BUTTON1)->SetFont(&m_font); //set font for search patient
+	GetDlgItem(IDC_BUTTON2)->SetFont(&m_font);//set font for search drug
+	GetDlgItem(IDC_BUTTON3)->SetFont(&m_font);//set font for add order
+	GetDlgItem(IDC_BUTTON4)->SetFont(&m_font);//set font for remove order
+}
+
+void CAllergyOrdersDlg::setIcon()
+{
+	// set icon for search buttons
+	HICON searchIcon;
+	searchIcon = AfxGetApp()->LoadIcon(IDI_ICON2);
+	m_searchDrugBtn.SetIcon(searchIcon);
+	m_searchPatientBtn.SetIcon(searchIcon);
+	HICON addIcon;
+	addIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
+	//addIcon = (HICON)::LoadImage(GetModuleHandle("Wizards.dll"), MAKEINTRESOURCE(IDC_BUTTON3), IDI_ICON1, 16, 16, 0);
+	//addIcon = (HICON)LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON,::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), 0);
+	m_addBtn.SetIcon(addIcon);
+	HICON minusIcon;
+	minusIcon = AfxGetApp()->LoadIcon(IDI_ICON3);
+	m_removeBtn.SetIcon(minusIcon);
+}
+
+void CAllergyOrdersDlg::setList()
+{
+	/*
+	The following code will set headings for the list control which displays the orders to be placed.
+	*/
+	m_orderLstCtrl.SetExtendedStyle(m_orderLstCtrl.GetExtendedStyle() | LVS_EX_FULLROWSELECT);
+	try
+	{
+		m_orderLstCtrl.InsertColumn(0, _T("Patient Name"), LVCFMT_LEFT, 150);
+		m_orderLstCtrl.InsertColumn(1, _T("Drug Name"), LVCFMT_LEFT, 200);
+		m_orderLstCtrl.InsertColumn(2, _T("Date"), LVCFMT_LEFT, 150);
+		m_orderLstCtrl.InsertColumn(3, _T("Comment"), LVCFMT_LEFT, 200);
+	}
+	catch (CException* e)
+	{
+		MessageBox(_T("Error creating List Control"));
+		e->Delete();
+		this->DestroyWindow();
+	}
+}
+
+
+
+
+void CAllergyOrdersDlg::OnEnUpdateEdit1()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function to send the EM_SETEVENTMASK message to the control
+	// with the ENM_UPDATE flag ORed into the lParam mask.
+
+	// TODO:  Add your control notification handler code here
+	CString sFromPatientCtrl;
+	int iRowSize;
+	COrderService orderService;
+	m_patientEdt.GetWindowText(sFromPatientCtrl);
+	if (sFromPatientCtrl.IsEmpty() | (sFromPatientCtrl.GetLength() <3))
+	{
+		return;
+	}
+	iRowSize = orderService.SearchPatient(sFromPatientCtrl, true);
+	if (iRowSize == 1)
+	{
+		m_patientArray.SetAtGrow(g_nPatientRecordSize + 1, theApp.m_patientArray[1]);
+		m_patientEdt.SetWindowText(theApp.m_patientArray[1].GetPatientName());
+		m_searchDrugBtn.EnableWindow(true);
+	}
+	return;
 }
